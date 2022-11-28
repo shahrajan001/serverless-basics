@@ -1,4 +1,4 @@
-const Responses = require('./API_Responses')
+const Responses = require('../common/API_Responses')
 
 const data = {
     B12445: { name: 'Rajan Shah', age: 21, job: 'Backend Developer' },

@@ -27,14 +27,25 @@ provider:
   profile: rajan 
   stage: dev
   region: us-east-1
+  environment:
+    tableName: ${self:custom.tableName}
+  iamRoleStatements:
+    - Effect: Allow
+      Action: 
+        - dynamodb:*
+      Resource: '*'
 
 package:
+  individually: true
   exclude:
     - node_modules/**
-# plugins: 
-#   - serverless-s3-sync 
+    
+plugins:
+  - serverless-webpack
+  # - serverless-s3-sync 
 
-# custom:
+custom:
+  tableName: OSP-appsync-backend-UserTable
 #   s3Sync:
 #     - bucketName : ospbucketupload-001
 #       localDir: uploadData
@@ -71,10 +82,10 @@ package:
 
 functions:
   getUser:
-    handler: functions/getUser.handler
+    handler: functions/endpoints/getUserDetails.handler
     events:
       - http:
-          path: get-user/{ID}
+          path: get-user-details/{ID}
           method: GET
           cors: true
 
@@ -123,10 +134,33 @@ functions:
 # you can add CloudFormation resource templates here
 resources:
  Resources:
-   OSPBucketUpload:
-     Type: AWS::S3::Bucket
-     Properties:
-       BucketName: ospbucketupload-001
+    OSPBucketUpload:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ospbucketupload-001
+    
+    OSPDynamoDB:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: ID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ID
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        # ProvisionedThroughput:
+        #       ReadCapacityUnits: 1
+        #       WriteCapacityUnits: 1
+
+
+
+
+
+
+
+
 #  Outputs:
 #     NewOutput:
 #       Description: "Description for the output"
