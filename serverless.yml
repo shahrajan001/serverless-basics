@@ -36,12 +36,12 @@ provider:
       Resource: '*'
 
 package:
-  individually: true
+  # individually: true
   exclude:
     - node_modules/**
     
-plugins:
-  - serverless-webpack
+# plugins:
+  # - serverless-webpack
   # - serverless-s3-sync 
 
 custom:
@@ -50,6 +50,50 @@ custom:
 #     - bucketName : ospbucketupload-001
 #       localDir: uploadData
 
+functions:
+  getUser:
+    handler: functions/endpoints/getUserDetails.handler
+    events:
+      - http:
+          path: get-user-details/{ID}
+          method: GET
+          cors: true
+  createUser:    
+    handler: functions/endpoints/createUser.handler 
+    events:
+      - http:
+          path: create-user/{ID}
+          method: POST
+          cors: true
+
+#    If your web page makes an HTTP request to a different domain than you're currently on, it needs to be CORS-friendly.          
+
+resources:
+ Resources:
+    OSPBucketUpload:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ospbucketupload-001
+    
+    OSPDynamoDB:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:custom.tableName}
+        AttributeDefinitions:
+          - AttributeName: ID
+            AttributeType: S
+        KeySchema:
+          - AttributeName: ID
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        # ProvisionedThroughput:
+        #       ReadCapacityUnits: 1
+        #       WriteCapacityUnits: 1
+
+#  Outputs:
+#     NewOutput:
+#       Description: "Description for the output"
+#       Value: "Some output value"
 # you can add statements to the Lambda function's IAM Role here
 #  iam:
 #    role:
@@ -79,17 +123,6 @@ custom:
 #    - '!exclude-me-dir/**'
 #    - include-me.js
 #    - include-me-dir/**
-
-functions:
-  getUser:
-    handler: functions/endpoints/getUserDetails.handler
-    events:
-      - http:
-          path: get-user-details/{ID}
-          method: GET
-          cors: true
-
-#    If your web page makes an HTTP request to a different domain than you're currently on, it needs to be CORS-friendly.          
 
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
@@ -132,36 +165,3 @@ functions:
 #      variable2: value2
 
 # you can add CloudFormation resource templates here
-resources:
- Resources:
-    OSPBucketUpload:
-      Type: AWS::S3::Bucket
-      Properties:
-        BucketName: ospbucketupload-001
-    
-    OSPDynamoDB:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.tableName}
-        AttributeDefinitions:
-          - AttributeName: ID
-            AttributeType: S
-        KeySchema:
-          - AttributeName: ID
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
-        # ProvisionedThroughput:
-        #       ReadCapacityUnits: 1
-        #       WriteCapacityUnits: 1
-
-
-
-
-
-
-
-
-#  Outputs:
-#     NewOutput:
-#       Description: "Description for the output"
-#       Value: "Some output value"
