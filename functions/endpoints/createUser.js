@@ -19,16 +19,11 @@ const handler = async (event) => {
         return null
     })
 
-    // const user = await Dynamo.get(ID, tableName).catch((error) => {
-    //     console.log("Unable to fetch data from DynamoDB", error)
-    //     return null
-    // })
-
     if (!newUser) {
         return Responses._400({ message: `Failed to write the user ${ID} in dynamoDB` })
     }
 
-    return Responses._200({ user })
+    return Responses._200({ newUser })
 }
 
 module.exports = { handler }
