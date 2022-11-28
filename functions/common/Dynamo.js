@@ -17,9 +17,6 @@ const Dynamo = {
         if(!data || !data.Item){
             throw Error(`There was an error fetching the data for ID for ${ID} from ${TableName}`)
         }
-        console.log(data)
-q2
         return data.Item
-}}
 
 module.exports = Dynamo
