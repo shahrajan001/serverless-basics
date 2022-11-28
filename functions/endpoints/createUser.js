@@ -11,10 +11,8 @@ const handler = async (event) => {
 
     let ID = event.pathParameters.ID
     const user = JSON.parse(event.body);
-    console.log("user1",user)
     
     user.ID = ID
-    console.log("user2",user)
 
     const newUser = await Dynamo.write(user, tableName).catch((error) => {
         console.log("Unable to write data in DynamoDB", error)
