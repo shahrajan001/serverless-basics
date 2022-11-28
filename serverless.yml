@@ -60,6 +60,7 @@ functions:
           path: get-user-details/{ID}
           method: GET
           cors: true
+
   createUser:    
     handler: functions/endpoints/createUser.handler 
     events:
@@ -67,6 +68,7 @@ functions:
           path: create-user/{ID}
           method: POST
           cors: true
+
   createFile:    
     handler: functions/endpoints/createFile.handler 
     events:
@@ -74,6 +76,14 @@ functions:
           path: create-file/{fileName}
           method: POST
           cors: true
+
+  getFile:    
+    handler: functions/endpoints/getFile.handler 
+    events:
+      - http:
+          path: get-file/{fileName}
+          method: GET
+          cors: true        
 
 #    If your web page makes an HTTP request to a different domain than you're currently on, it needs to be CORS-friendly.          
 
