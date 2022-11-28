@@ -29,10 +29,12 @@ provider:
   region: us-east-1
   environment:
     tableName: ${self:custom.tableName}
+    bucket: ${self:custom.bucketName}
   iamRoleStatements:
     - Effect: Allow
       Action: 
         - dynamodb:*
+        - s3:*
       Resource: '*'
 
 package:
@@ -46,7 +48,7 @@ package:
 
 custom:
   tableName: OSP-appsync-backend-UserTable
-#   s3Sync:
+  bucketName: osp-appsync-backend-upload
 #     - bucketName : ospbucketupload-001
 #       localDir: uploadData
 
@@ -65,6 +67,13 @@ functions:
           path: create-user/{ID}
           method: POST
           cors: true
+  createFile:    
+    handler: functions/endpoints/createFile.handler 
+    events:
+      - http:
+          path: create-file/{fileName}
+          method: POST
+          cors: true
 
 #    If your web page makes an HTTP request to a different domain than you're currently on, it needs to be CORS-friendly.          
 
@@ -73,7 +82,7 @@ resources:
     OSPBucketUpload:
       Type: AWS::S3::Bucket
       Properties:
-        BucketName: ospbucketupload-001
+        BucketName: ${self:custom.bucketName}
     
     OSPDynamoDB:
       Type: AWS::DynamoDB::Table
