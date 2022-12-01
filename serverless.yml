@@ -29,23 +29,32 @@ provider:
   region: us-east-1
   environment:
     tableName: ${self:custom.tableName}
-    bucket: ${self:custom.bucketName}
+    bucketName: ${self:custom.bucketName}
   iamRoleStatements:
     - Effect: Allow
       Action: 
         - dynamodb:*
         - s3:*
       Resource: '*'
+  apiKeys:
+      - OSPfreeApiKey
+  usagePlan:
+      quota: 
+        limit: 1000
+        period: MONTH
+      throttle:
+        rateLimit: 5
+        burstLimit: 20
+
+# plugins:
+  # - serverless-webpack
+  # - serverless-s3-sync 
 
 package:
   # individually: true
   exclude:
     - node_modules/**
     
-# plugins:
-  # - serverless-webpack
-  # - serverless-s3-sync 
-
 custom:
   tableName: OSP-appsync-backend-UserTable
   bucketName: osp-appsync-backend-upload
@@ -60,6 +69,7 @@ functions:
           path: get-user-details/{ID}
           method: GET
           cors: true
+          private: true
 
   createUser:    
     handler: functions/endpoints/createUser.handler 
