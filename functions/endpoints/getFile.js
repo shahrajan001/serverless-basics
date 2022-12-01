@@ -1,7 +1,7 @@
 const Responses = require('../common/API_Responses')
 const S3 = require('../common/S3')
 
-const bucket = process.env.bucket
+const bucket = process.env.bucketName
 
 const handler = async (event) => {
     console.log(event);
