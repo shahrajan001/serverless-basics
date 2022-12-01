@@ -37,15 +37,28 @@ provider:
         - s3:*
       Resource: '*'
   apiKeys:
-      - OSPfreeApiKey
-  usagePlan:
-      quota: 
-        limit: 1000
-        period: MONTH
-      throttle:
-        rateLimit: 5
-        burstLimit: 20
+      - free:
+          - OSPComplimentaryApiKey
+      - paid:
+          - OSPPremiumApiKey
+          - user2PaidKey
 
+  usagePlan:
+      - free:
+          quota: 
+              limit: 1000
+              period: MONTH
+          throttle:
+              rateLimit: 5
+              burstLimit: 20
+      - paid:
+          quota: 
+              limit: 10000
+              period: MONTH
+          throttle:
+              rateLimit: 50
+              burstLimit: 200
+# There are no errors above this
 # plugins:
   # - serverless-webpack
   # - serverless-s3-sync 
