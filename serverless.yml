@@ -106,7 +106,20 @@ functions:
       - http:
           path: get-file/{fileName}
           method: GET
-          cors: true        
+          cors: true
+
+  # proxy:
+  #   handler: functions/endpoints/proxy.handler
+  #   events:
+  #     - http:
+  #         path: chuck-norris/{proxy+}
+  #         method: ANY
+  #         integration: http-proxy
+  #         request:
+  #           uri: http://api.icndb.com/{proxy}
+  #           parameters:
+  #             paths: 
+  #               proxy: true
 
 #    If your web page makes an HTTP request to a different domain than you're currently on, it needs to be CORS-friendly.          
 
