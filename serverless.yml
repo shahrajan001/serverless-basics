@@ -1,4 +1,4 @@
-service: OSP-appsync-backend
+service: OSP-backend
 
 frameworkVersion: '2'
 
@@ -6,11 +6,10 @@ provider:
   name: aws
   runtime: nodejs12.x
   lambdaHashingVersion: 20201221
-  profile: rajan 
   stage: dev
   region: us-east-1
   environment:
-    tableName: ${self:custom.tableName}
+    userTableName: ${self:custom.userTableName}
     bucketName: ${self:custom.bucketName}
   iamRoleStatements:
     - Effect: Allow
@@ -18,6 +17,7 @@ provider:
         - dynamodb:*
         - s3:*
         - ses:*
+        - sns:*
       Resource: '*'
   # apiKeys:
   #     - free:
@@ -43,7 +43,7 @@ provider:
       #         burstLimit: 200
 # There are no errors above this
 # plugins:
-  # - serverless-webpack
+#   - serverless-webpack
   # - serverless-s3-sync 
 
 package:
@@ -52,10 +52,11 @@ package:
     - node_modules/**
     
 custom:
-  tableName: OSP-appsync-backend-UserTable
-  bucketName: osp-appsync-backend-upload
-#     - bucketName : ospbucketupload-001
-#       localDir: uploadData
+  userTableName: OSP-backend-UserTable-${opt:stage}
+  bucketName: osp-appsync-backend-upload-${opt:stage}
+  # s3Sync:
+    # - bucketName : ospbucketupload-001
+      # localDir: ./uploadData
 
 functions:
   getUser:
@@ -99,6 +100,14 @@ functions:
           method: POST
           cors: true
 
+  sendSMS:    
+    handler: functions/endpoints/sendSMS.handler 
+    events:
+      - http:
+          path: sendSMS
+          method: POST
+          cors: true
+
   # proxy:
   #   handler: functions/endpoints/proxy.handler
   #   events:
@@ -124,7 +133,7 @@ resources:
     OSPDynamoDB:
       Type: AWS::DynamoDB::Table
       Properties:
-        TableName: ${self:custom.tableName}
+        TableName: ${self:custom.userTableName}
         AttributeDefinitions:
           - AttributeName: ID
             AttributeType: S

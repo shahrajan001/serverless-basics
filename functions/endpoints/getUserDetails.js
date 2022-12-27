@@ -1,7 +1,7 @@
 const Responses = require('../common/API_Responses')
 const Dynamo = require('../common/Dynamo')
 
-const tableName = process.env.tableName
+const tableName = process.env.userTableName
 
 const handler = async (event) => {
     console.log(event);
