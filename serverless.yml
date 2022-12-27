@@ -53,7 +53,7 @@ package:
     
 custom:
   userTableName: OSP-backend-UserTable-${opt:stage}
-  bucketName: osp-appsync-backend-upload-${opt:stage}
+  bucketName: osp-backend-upload-${opt:stage}
   # s3Sync:
     # - bucketName : ospbucketupload-001
       # localDir: ./uploadData
@@ -66,7 +66,7 @@ functions:
           path: get-user-details/{ID}
           method: GET
           cors: true
-          private: true
+          # private: true
 
   createUser:    
     handler: functions/endpoints/createUser.handler 
