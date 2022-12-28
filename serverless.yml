@@ -76,6 +76,14 @@ functions:
           method: POST
           cors: true
 
+  updateUserSalary:
+    handler: functions/endpoints/updateUser.handler
+    events:
+      - http:
+          path: update-user-salary/{ID}
+          method: PUT
+          cors: true
+
   createFile:    
     handler: functions/endpoints/createFile.handler 
     events:
