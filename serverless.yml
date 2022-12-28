@@ -77,11 +77,19 @@ functions:
           cors: true
 
   updateUserSalary:
-    handler: functions/endpoints/updateUser.handler
+    handler: functions/endpoints/updateUserSalary.handler
     events:
       - http:
           path: update-user-salary/{ID}
           method: PUT
+          cors: true
+
+  queryUsers:
+    handler: functions/endpoints/queryUser.handler
+    events:
+      - http:
+          path: query-users/{position}
+          method: GET
           cors: true
 
   createFile:    
@@ -137,18 +145,7 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:custom.bucketName}
-    
+# ----------------DynamoDB----------------    
     OSPDynamoDB:
-      Type: AWS::DynamoDB::Table
-      Properties:
-        TableName: ${self:custom.userTableName}
-        AttributeDefinitions:
-          - AttributeName: ID
-            AttributeType: S
-        KeySchema:
-          - AttributeName: ID
-            KeyType: HASH
-        BillingMode: PAY_PER_REQUEST
-        # ProvisionedThroughput:
-        #       ReadCapacityUnits: 1
-        #       WriteCapacityUnit
+      ${file(resources/dynamodb/users-db.yml)}
+      

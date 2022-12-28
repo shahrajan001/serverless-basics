@@ -1,0 +1,24 @@
+Type: AWS::DynamoDB::Table
+Properties:
+  TableName: ${self:custom.userTableName}
+  AttributeDefinitions:
+    - AttributeName: ID
+      AttributeType: S
+    - AttributeName: positions
+      AttributeType: S
+  KeySchema:
+    - AttributeName: ID
+      KeyType: HASH
+  GlobalSecondaryIndexes:
+    - IndexName: position-code
+      KeySchema:
+        - AttributeName: positions
+          KeyType: HASH
+      Projection:
+          ProjectionType: ALL
+  
+  BillingMode: PAY_PER_REQUEST
+
+  # ProvisionedThroughput:  
+  #       ReadCapacityUnits: 1
+  #       WriteCapacityUnit
