@@ -1,0 +1,10 @@
+Type: AWS::DynamoDB::Table
+Properties:
+  TableName: ${self:custom.signupTableName}
+  AttributeDefinitions:
+    - AttributeName: ID
+      AttributeType: S
+  KeySchema:
+    - AttributeName: ID
+      KeyType: HASH
+  BillingMode: PAY_PER_REQUEST

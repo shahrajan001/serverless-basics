@@ -8,9 +8,12 @@ provider:
   lambdaHashingVersion: 20201221
   stage: dev
   region: us-east-1
+  layers:
+  - !Ref StaticLambdaLayer
   environment:
     userTableName: ${self:custom.userTableName}
     bucketName: ${self:custom.bucketName}
+    signupTableName: ${self:custom.signupTableName}
   iamRoleStatements:
     - Effect: Allow
       Action: 
@@ -42,23 +45,42 @@ provider:
       #         rateLimit: 50
       #         burstLimit: 200
 # There are no errors above this
-# plugins:
-#   - serverless-webpack
+plugins:
+  - serverless-jetpack
+  - serverless-step-functions
   # - serverless-s3-sync 
+
+layers:
+  ${file(./layers/layers.yml)}
 
 package:
   # individually: true
   exclude:
     - node_modules/**
+    - 'layers/**'
     
 custom:
-  userTableName: OSP-backend-UserTable-${opt:stage}
+  userTableName: ${self:service}-UserTable-${opt:stage}
+  signupTableName: ${self:service}-signupTableName-${opt:stage}
   bucketName: osp-backend-upload-${opt:stage}
   # s3Sync:
     # - bucketName : ospbucketupload-001
       # localDir: ./uploadData
 
+stepFunctions:
+  validate: true
+  stateMachines:
+    reminderEmail:
+      name: reminderEmail
+      events:
+        - http:
+            path: signup-with-reminders
+            method: POST
+            cors: true 
+      definition: ${file(resources/stepFunctions/stepFunction.yml)}
+
 functions:
+#-------------------------ENDPOINTS-------------------------
   getUser:
     handler: functions/endpoints/getUserDetails.handler
     events:
@@ -137,15 +159,29 @@ functions:
   #             paths: 
   #               proxy: true
 
-#    If your web page makes an HTTP request to a different domain than you're currently on, it needs to be CORS-friendly.          
+#    If your web page makes an HTTP request to a different domain than you're currently on, it needs to be CORS-friendly.      
 
+#-------------------------STEP FUNCTIONS LAMBDA-------------------------
+  addSignup:    
+    handler: functions/stepFunctionsLambdas/addSignup.handler
+ 
+  getSignup:    
+    handler: functions/stepFunctionsLambdas/getSignup.handler
+
+  sendReminder:
+      handler: functions/stepFunctionsLambdas/sendReminder.handler
+    
 resources:
- Resources:
+  Resources:
     OSPBucketUpload:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:custom.bucketName}
+
 # ----------------DynamoDB----------------    
     OSPDynamoDB:
       ${file(resources/dynamodb/users-db.yml)}
+
+    EmailSignupTable:
+      ${file(resources/dynamodb/signedupUsers-db.yml)}
       
